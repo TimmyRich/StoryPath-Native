@@ -56,7 +56,7 @@ const CustomDrawerContent = (props) => {
         label={"Profile"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/about" ? "#fff" : "#000" },
+          { color: pathname == "/profile" ? "#fff" : "#000" },
         ]}
         style={{ backgroundColor: pathname == "/profile" ? "#333" : "#fff" }}
         onPress={() => {
@@ -74,7 +74,7 @@ const CustomDrawerContent = (props) => {
         label={"Projects"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/profile" ? "#fff" : "#000" },
+          { color: pathname == "/projects" ? "#fff" : "#000" },
         ]}
         style={{ backgroundColor: pathname == "/projects" ? "#333" : "#fff" }}
         onPress={() => {
