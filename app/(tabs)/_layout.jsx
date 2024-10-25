@@ -7,19 +7,26 @@ import { DrawerToggleButton } from '@react-navigation/drawer';
 export default function _layout() {
   return (
    <Tabs screenOptions={{headerLeft: () => <DrawerToggleButton tintColor='#000' />}}>
-    <Tabs.Screen name='blog' options={{
+    <Tabs.Screen name='project_home' options={{
       tabBarIcon: ({color}) => (
         <Feather name="list" size={24} color={color} />
       ),
-      tabBarLabel: 'Blog',
-      headerTitle: 'Blog'
+      tabBarLabel: 'Project Home',
+      headerTitle: 'Project Home'
     }} />
-    <Tabs.Screen name='tips' options={{
+    <Tabs.Screen name='map' options={{
       tabBarIcon: ({color}) => (
         <Feather name="list" size={24} color={color} />
       ),
-      tabBarLabel: 'Tips',
-      headerTitle: 'Tips'
+      tabBarLabel: 'Map',
+      headerTitle: 'Map'
+    }} />
+    <Tabs.Screen name='qr_code_scanner' options={{
+      tabBarIcon: ({color}) => (
+        <Feather name="list" size={24} color={color} />
+      ),
+      tabBarLabel: 'QR Code Scanner',
+      headerTitle: 'QR Code Scanner'
     }} />
    </Tabs>
   )

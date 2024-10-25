@@ -33,7 +33,7 @@ const CustomDrawerContent = (props) => {
             name="list"
             size={size}
             color={pathname == "/" ? "#fff" : "#000"}
-          />
+          /> 
         )}
         label={"Welcome"}
         labelStyle={[

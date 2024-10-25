@@ -1,4 +1,5 @@
 {
+  "permissions": ["LOCATION"],
   "expo": {
     "name": "drawer-tabs-nav",
     "slug": "drawer-tabs-nav",
