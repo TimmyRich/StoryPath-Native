@@ -11,7 +11,6 @@ export default function Index() {
       }}
     >
       <Text>Welcome Page</Text>
-      <ShowMap/>
     </View>
   );
 }
