@@ -1,10 +1,11 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, Button, TextInput, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { UserContext } from './_layout';
 
 export default function Profile() {
-  const [username, setUsername] = useState('');
+  const {username, setUsername} = useContext(UserContext)
   const [image, setImage] = useState(null);
   const router = useRouter();
 

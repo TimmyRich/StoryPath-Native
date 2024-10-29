@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Drawer } from "expo-router/drawer";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { Feather } from "@expo/vector-icons";
@@ -12,7 +12,7 @@ const CustomDrawerContent = (props) => {
     console.log("Current Path", pathname);
   }, [pathname]);
 
-  const username = "s4697223"
+  const {username, setUsername} = useContext(UserContext)
 
   return (
     <DrawerContentScrollView {...props}>
@@ -103,14 +103,20 @@ const CustomDrawerContent = (props) => {
   );
 };
 
+export const UserContext = createContext()
+
 export default function Layout() {
+  const [username, setUsername] = useState("Default User")
+
   return (
-    <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />} screenOptions={{headerShown: false}}>
-      <Drawer.Screen name="index" options={{headerShown: true, headerTitle: "Home"}}  />
-      <Drawer.Screen name="profile" options={{headerShown: true, headerTitle: "Profile"}} />
-      <Drawer.Screen name="projects" options={{headerShown: true, headerTitle: "Projects"}} />
-      <Drawer.Screen name="about" options={{headerShown: true, headerTitle: "About"}} />
-    </Drawer>
+    <UserContext.Provider value={{username, setUsername}}>
+      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />} screenOptions={{headerShown: false}}>
+        <Drawer.Screen name="index" options={{headerShown: true, headerTitle: "Home"}}  />
+        <Drawer.Screen username={username} setUsername={setUsername} name="profile" options={{headerShown: true, headerTitle: "Profile"}} />
+        <Drawer.Screen name="projects" options={{headerShown: true, headerTitle: "Projects"}} />
+        <Drawer.Screen name="about" options={{headerShown: true, headerTitle: "About"}} />
+      </Drawer>
+    </UserContext.Provider>
   );
 }
 
