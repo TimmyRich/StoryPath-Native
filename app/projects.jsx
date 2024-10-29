@@ -14,7 +14,7 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const myProjects = await getProjects();
-        setProjects(myProjects);
+        setProjects(myProjects.filter((project) => project.is_published === true));
         console.log("Fetched Projects:", myProjects); // Log after setting the state
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -28,8 +28,8 @@ export default function Projects() {
       <View>
         <Text style={{ fontSize: 18, paddingVertical: 10 }}>Projects Page</Text>
         {projects.map( (project, index) => (
-          <View style={{ paddingVertical: 10 }}>
-            <Button onPress={() => router.push("/project_home")} title={project.title} key ={index}/>
+          <View style={{ paddingVertical: 10 }} key={index}>
+            <Button onPress={() => router.push("/project_home")} title={project.title}/>
           </View>
         ))}
         
