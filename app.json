@@ -1,5 +1,4 @@
 {
-  "permissions": ["LOCATION"],
   "expo": {
     "name": "drawer-tabs-nav",
     "slug": "drawer-tabs-nav",
@@ -13,6 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "permissions": ["LOCATION"],
     "ios": {
       "supportsTablet": true
     },
