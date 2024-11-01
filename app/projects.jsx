@@ -32,7 +32,6 @@ export default function Projects() {
             <Button onPress={() => router.push(`/project_home/${project.id}`)} title={project.title}/>
           </View>
         ))}
-        
 
         <View style={{ paddingVertical: 10 }}>
           <Button onPress={() => router.back()} title="Go Back" />

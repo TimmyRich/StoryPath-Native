@@ -71,7 +71,7 @@ export async function getProjects() {
  * The URL is slightly different from usual RESTful standards.
  * 
  * @param {string} id - The ID of the project to retrieve.
- * @returns {Promise<object>} - The project object matching the ID.
+ * @returns {Promise<object>} - An array containing the project object matching the ID.
  */
 export async function getProject(id) {
   return apiRequest(`/project?id=eq.${id}`);
@@ -180,3 +180,12 @@ export const generateLocation = (name, project_id, trigger = "Location Entry") =
 export const locationSort = (location1, location2) => {
   return location1.location_order - location2.location_order;
 };
+
+/**
+ * 
+ * @param {*} projectId 
+ * @returns 
+ */
+export const getProjectParticipantCount = (projectId) => {
+  return apiRequest(`/project_participant_counts?project_id=eq.${projectId}`)
+}

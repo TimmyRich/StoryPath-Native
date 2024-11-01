@@ -1,10 +1,14 @@
 import { View, Text, Button } from 'react-native'
 import React from 'react'
-import { Tabs, router } from 'expo-router'
+import { Tabs, router, useLocalSearchParams } from 'expo-router'
 import { Feather } from '@expo/vector-icons';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 
 export default function _layout() {
+
+  // ID for selected project
+  const {id} = useLocalSearchParams()
+
   return (
    <Tabs screenOptions={{headerLeft: () => <DrawerToggleButton tintColor='#000' />}}>
     <Tabs.Screen name='project_home' options={{
