@@ -29,7 +29,7 @@ export default function Projects() {
         <Text style={{ fontSize: 18, paddingVertical: 10 }}>Projects Page</Text>
         {projects.map( (project, index) => (
           <View style={{ paddingVertical: 10 }} key={index}>
-            <Button onPress={() => router.push("/project_home")} title={project.title}/>
+            <Button onPress={() => router.push(`/project_home/${project.id}`)} title={project.title}/>
           </View>
         ))}
         

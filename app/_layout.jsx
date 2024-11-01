@@ -106,7 +106,7 @@ const CustomDrawerContent = (props) => {
 export const UserContext = createContext()
 
 export default function Layout() {
-  const [username, setUsername] = useState("Default User")
+  const [username, setUsername] = useState("")
 
   return (
     <UserContext.Provider value={{username, setUsername}}>
