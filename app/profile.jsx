@@ -1,80 +1,119 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, Button, TextInput, Image, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+// Import necessary modules from React, React Native, and Expo
+import React, { useContext, useState } from "react";
+import { SafeAreaView, View, Image, TextInput, Dimensions, Button } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { UserContext } from './_layout';
+import { UserContext } from "./_layout";
 
-export default function Profile() {
-  const {username, setUsername} = useContext(UserContext)
-  const [image, setImage] = useState(null);
-  const router = useRouter();
+// Get the screen width for styling
+const { width } = Dimensions.get("window");
 
-  const pickImage = async () => {
-    // Request permission to access the image library
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+// Define the styles for the components
+const styles = {
+    container: {
+        padding: 20,
+        alignItems: "center", // Center the content horizontally
+    },
+    photoFullView: {
+        marginBottom: 20,
+        width: width * 0.5, // Adjust the circle size to 50% of the screen width
+        height: width * 0.5,
+        borderRadius: width * 0.25, // Make the border radius half of the width for a circle
+        overflow: "hidden", // Ensure the image stays within the circle
+        justifyContent: "center", // Center content within the circle
+        alignItems: "center",
+    },
+    photoEmptyView: {
+        width: width * 0.5,
+        height: width * 0.5,
+        borderRadius: width * 0.25,
+        borderWidth: 3,
+        borderColor: "#999",
+        borderStyle: "dashed",
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    photoFullImage: {
+        width: "100%",
+        height: "100%",
+        borderRadius: width * 0.25, // Ensures the image itself is circular
+    },
+    buttonView: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        width: "100%",
+    },
+    input: {
+      width: '80%',
+      height: 40,
+      borderColor: '#ccc',
+      borderWidth: 1,
+      paddingHorizontal: 10,
+      marginBottom: 20,
+      marginTop: 30, // Add space above the input field
+    }
+};
 
-    if (!permissionResult.granted) {
-      alert('Permission to access media library is required!');
-      return;
+// Main App component
+export default function App() {
+    const [photoState, setPhotoState] = useState({});
+    const {username, setUsername} = useContext(UserContext)
+
+    async function handleChangePress() {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setPhotoState(result.assets[0]);
+        }
     }
 
-    // Launch the image picker
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.uri); // Set the image URI as state
+    async function handleRemovePress() {
+        setPhotoState({});
     }
-  };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Profile Page</Text>
+    const hasPhoto = Boolean(photoState.uri);
 
-      {/* Username Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your username"
-        value={username}
-        onChangeText={setUsername}
-      />
+    function Photo(props) {
+        if (hasPhoto) {
+            return (
+                <View style={styles.photoFullView}>
+                    <Image
+                        style={styles.photoFullImage}
+                        resizeMode="cover"
+                        source={{ uri: photoState.uri }}
+                    />
+                </View>
+            );
+        } else {
+            return <View style={styles.photoEmptyView} />;
+        }
+    }
 
-      {/* Display selected image */}
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-
-      <Button title="Pick an Image" onPress={pickImage} />
-      <Button title="Go Back" onPress={() => router.back()} />
-    </View>
-  );
+    return (
+        <SafeAreaView>
+            <View style={styles.container}>
+                <Photo />
+                <View style={styles.buttonView}>
+                    <Button
+                        onPress={handleChangePress}
+                        title={hasPhoto ? "Change Photo" : "Add Photo"}
+                    />
+                    {hasPhoto && <Button onPress={handleRemovePress} title="Remove Photo" />}
+                </View>
+                {/* Username Input */}
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={setUsername}
+            />
+            </View>
+            
+        </SafeAreaView>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  heading: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  input: {
-    width: '80%',
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    marginBottom: 20,
-  },
-});
