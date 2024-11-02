@@ -1,13 +1,17 @@
 
 // Import necessary modules from React, React Native, and Expo
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { UserContext } from '../../_layout';
+import { postTrackingData } from '../../../components/RESTful';
+import { ProjectContext } from '../_layout';
 
 export default function QrCodeScanner() {
   const [scanned, setScanned] = useState(false);
-  const [scannedData, setScannedData] = useState('');
   const [permission, requestPermission] = useCameraPermissions();
+  const {username} = useContext(UserContext)
+  const { project } = useContext(ProjectContext)
 
   if (!permission) {
     // Camera permissions are still loading
@@ -24,9 +28,26 @@ export default function QrCodeScanner() {
     );
   }
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    setScannedData(data);
+    data = data.split('|')
+    if (data[0] !=  project.id) {
+      console.log('Missmathced project_ID')
+      return
+    }
+    tracking_data = {
+      project_id: data[0],
+      location_id: data[1],
+      points: data[2],
+      participant_username: username
+    }
+    
+    try {
+      await postTrackingData(tracking_data);
+      console.log(`Posted:`, tracking_data);
+    } catch (error) {
+      console.error('Error posting tracking data:', error);
+    }
   };
 
   return (
