@@ -1,17 +1,32 @@
 
 // Import necessary modules from React, React Native, and Expo
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { UserContext } from '../../_layout';
-import { postTrackingData } from '../../../components/RESTful';
+import { postTrackingData, getTrackingData } from '../../../components/RESTful';
 import { ProjectContext } from '../_layout';
 
 export default function QrCodeScanner() {
   const [scanned, setScanned] = useState(false);
+  const [visited, setVisited] = useState([])
   const [permission, requestPermission] = useCameraPermissions();
   const {username} = useContext(UserContext)
   const { project } = useContext(ProjectContext)
+
+  const fetchVisitedLocations = async () => {
+    try {
+      const tracking_data = await getTrackingData(username, project.id);
+      const visitedLocations = tracking_data.map(data => data["location_id"])
+      setVisited(visitedLocations)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVisitedLocations()
+  })
 
   if (!permission) {
     // Camera permissions are still loading
@@ -40,6 +55,11 @@ export default function QrCodeScanner() {
       location_id: data[1],
       points: data[2],
       participant_username: username
+    }
+
+    if (visited.some(location_id => location_id == tracking_data.location_id)) {
+      console.log("Already Visited this Location")
+      return
     }
     
     try {
