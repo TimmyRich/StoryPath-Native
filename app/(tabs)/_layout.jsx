@@ -7,6 +7,8 @@ import { DrawerToggleButton } from '@react-navigation/drawer';
 // provide project as context
 export const ProjectContext = createContext()
 
+export const LocationContext = createContext()
+
 export default function _layout() {
 
   // ID for selected project

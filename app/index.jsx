@@ -1,5 +1,4 @@
 import { Text, View } from "react-native";
-import ShowMap from "../components/ShowMap";
 
 export default function Index() {
   return (
