@@ -183,9 +183,32 @@ export const locationSort = (location1, location2) => {
 
 /**
  * 
- * @param {*} projectId 
- * @returns 
+ * @param {object} trackingData - Object containing a username, projectID and locationID.
+ * @returns - API Response
+ */
+export const postTrackingData = (trackingData) => {
+  return apiRequest('/tracking', 'POST', trackingData)
+}
+
+/**
+ * Function to retrieve tracking data for a specific participant username and project ID.
+ * 
+ * @param {string} participantUsername - The username of the participant.
+ * @param {number|string} projectId - The ID of the project.
+ * @returns {Promise<Array>} - An array of tracking objects that match the criteria.
+ */
+export const getTrackingData = (participantUsername, projectId) => {
+  const endpoint = `/tracking?participant_username=eq.${participantUsername}&project_id=eq.${projectId}`;
+  return apiRequest(endpoint);
+};
+
+/**
+ * Function to retrieve the number of participants for a specific project.
+ * 
+ * @param {number|string} projectId - The ID of the project.
+ * @returns {Promise<object>} - An object containing the project ID and the number of participants.
  */
 export const getProjectParticipantCount = (projectId) => {
-  return apiRequest(`/project_participant_counts?project_id=eq.${projectId}`)
-}
+  const endpoint = `/project_participant_counts?project_id=eq.${projectId}`;
+  return apiRequest(endpoint);
+};
