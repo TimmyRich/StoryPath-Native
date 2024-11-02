@@ -1,24 +1,44 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { getProject } from '../../../components/RESTful';
 import { ProjectContext } from '../_layout';
+import { getTrackingData } from '../../../components/RESTful';
+import { UserContext } from '../../_layout';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProjectHome() {
+  const [score, setScore] = useState(0);
   const { project, setProject } = useContext(ProjectContext);
+  const { username } = useContext(UserContext);
   const { id } = useLocalSearchParams();
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const myProject = await getProject(id);
-        setProject(myProject[0]);
-      } catch (error) {
-        console.error("Error Fetching Project...");
-      }
-    };
-    fetchProject();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchVisitedLocations = async () => {
+        try {
+          const tracking_data = await getTrackingData(username, id);
+          const totalScore = tracking_data.reduce((acc, location) => acc + location.points, 0);
+          setScore(totalScore);
+          console.log(tracking_data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const fetchProject = async () => {
+        try {
+          const myProject = await getProject(id);
+          setProject(myProject[0]);
+        } catch (error) {
+          console.error("Error Fetching Project...");
+        }
+      };
+
+      fetchProject();
+      fetchVisitedLocations();
+    }, [username, id]) // include dependencies
+  );
 
   return (
     <View style={styles.container}>
@@ -38,6 +58,13 @@ export default function ProjectHome() {
         <Text style={styles.sectionTitle}>Initial Clue</Text>
         <Text style={styles.sectionContent}>
           {project ? project.initial_clue : "Fetching Initial Clue..."}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Total Score</Text>
+        <Text style={styles.sectionContent}>
+          {score}
         </Text>
       </View>
 
