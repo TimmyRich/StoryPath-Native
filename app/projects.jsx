@@ -1,7 +1,8 @@
-import { View, Text, Button, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useRouter } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { getProjects } from '../components/RESTful';
+import { getProjectParticipantCount } from '../components/RESTful';
 
 export default function Projects() {
   const router = useRouter();
@@ -12,8 +13,24 @@ export default function Projects() {
     const fetchProjects = async () => {
       try {
         const myProjects = await getProjects();
-        setProjects(myProjects.filter((project) => project.is_published === true));
-        console.log("Fetched Projects:", myProjects);
+        const publishedProjects = myProjects.filter((project) => project.is_published === true);
+        
+        // Fetch participant counts for each published project
+        const updatedProjects = await Promise.all(
+          publishedProjects.map(async (project) => {
+            try {
+              let participant_count = await getProjectParticipantCount(project.id);
+              participant_count = participant_count[0]? participant_count[0]["number_participants"] : 0
+              return { ...project, participant_count: participant_count }; // Add the count to the project object
+            } catch (error) {
+              console.error("Error when getting participant counts:", error);
+              return { ...project, participant_count: 0 }; // Handle error case
+            }
+          })
+        );
+
+        setProjects(updatedProjects); // Update state with the updated project array
+        console.log("Fetched Projects:", updatedProjects);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -36,7 +53,7 @@ export default function Projects() {
             style={styles.projectButton}
             onPress={() => router.push(`/project_home/${project.id}`)}
           >
-            <Text style={styles.projectButtonText}>{project.title}</Text>
+            <Text style={styles.projectButtonText}>{`${project.title} | Participants: ${project.participant_count}`}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

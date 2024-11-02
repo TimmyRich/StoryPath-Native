@@ -186,7 +186,7 @@ export const locationSort = (location1, location2) => {
  * @param {object} trackingData - Object containing a username, projectID and locationID.
  * @returns - API Response
  */
-export const postTrackingData = (trackingData) => {
+export async function postTrackingData(trackingData) {
   return apiRequest('/tracking', 'POST', trackingData)
 }
 
@@ -197,7 +197,7 @@ export const postTrackingData = (trackingData) => {
  * @param {number|string} projectId - The ID of the project.
  * @returns {Promise<Array>} - An array of tracking objects that match the criteria.
  */
-export const getTrackingData = (participantUsername, projectId) => {
+export async function getTrackingData(participantUsername, projectId) {
   const endpoint = `/tracking?participant_username=eq.${participantUsername}&project_id=eq.${projectId}`;
   return apiRequest(endpoint);
 };
@@ -208,7 +208,7 @@ export const getTrackingData = (participantUsername, projectId) => {
  * @param {number|string} projectId - The ID of the project.
  * @returns {Promise<object>} - An object containing the project ID and the number of participants.
  */
-export const getProjectParticipantCount = (projectId) => {
+export async function getProjectParticipantCount(projectId) {
   const endpoint = `/project_participant_counts?project_id=eq.${projectId}`;
   return apiRequest(endpoint);
 };
