@@ -68,7 +68,9 @@ export default function ProjectHome() {
   );
 
   const numLocations = locations.length;
-  console.log(targetLocation);
+  const maxScore = locations.reduce((total, location) => {
+    return total + location.score_points;
+  }, 0);
 
   return (
     <View style={styles.container}>
@@ -105,7 +107,7 @@ export default function ProjectHome() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Total Score:</Text>
         <Text style={styles.sectionContent}>
-          {score}
+          {`${score}/${maxScore}`}
         </Text>
       </View>
 
