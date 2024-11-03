@@ -4,8 +4,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { UserContext } from '../../_layout';
-import { postTrackingData, getTrackingData } from '../../../components/RESTful';
+import { postTrackingData, getTrackingData, getLocations } from '../../../components/RESTful';
 import { ProjectContext } from '../_layout';
+import { router } from 'expo-router';
 
 export default function QrCodeScanner() {
   const [scanned, setScanned] = useState(false);
@@ -68,6 +69,14 @@ export default function QrCodeScanner() {
     } catch (error) {
       console.error('Error posting tracking data:', error);
     }
+
+    // Route back to home page and display location details for the location just scanned
+    router.push({
+      pathname: `/project_home/${project.id}`,
+      params: {
+        location_id: tracking_data.location_id
+      }
+    })
   };
 
   return (

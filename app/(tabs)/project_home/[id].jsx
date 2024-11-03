@@ -1,31 +1,33 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import React, { useState, useContext, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import { getProject } from '../../../components/RESTful';
+import { getProject, getTrackingData, getLocations, getLocation } from '../../../components/RESTful';
 import { ProjectContext } from '../_layout';
-import { getTrackingData } from '../../../components/RESTful';
 import { UserContext } from '../../_layout';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProjectHome() {
   const [score, setScore] = useState(0);
   const { project, setProject } = useContext(ProjectContext);
+  const [visited, setVisited] = useState([])
+  const [locations, setLocations] = useState([])
   const { username } = useContext(UserContext);
-  const { id } = useLocalSearchParams();
+  const { id, location_id } = useLocalSearchParams();
+  const [targetLocation, setTargetLocation] = useState()
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchVisitedLocations = async () => {
         try {
           const tracking_data = await getTrackingData(username, id);
+          setVisited(tracking_data);
           const totalScore = tracking_data.reduce((acc, location) => acc + location.points, 0);
           setScore(totalScore);
-          console.log(tracking_data);
         } catch (error) {
           console.error(error);
         }
       };
-
+  
       const fetchProject = async () => {
         try {
           const myProject = await getProject(id);
@@ -34,37 +36,71 @@ export default function ProjectHome() {
           console.error("Error Fetching Project...");
         }
       };
-
+  
+      const fetchLocations = async () => {
+        try {
+          const locations = await getLocations(id);
+          setLocations(locations);
+        } catch (error) {
+          console.error("Error Fetching Locations");
+          console.error(error);
+        }
+      };
+  
+      const fetchTargetLocation = async () => {
+        if (location_id) {
+          try {
+            const location = await getLocation(location_id);
+            setTargetLocation(location[0]);
+          } catch (error) {
+            console.error("Error Fetching Location");
+            console.error(error);
+          }
+        }
+      };
+  
       fetchProject();
       fetchVisitedLocations();
-    }, [username, id]) // include dependencies
+      fetchLocations();
+      fetchTargetLocation();
+    }, [username, id, location_id]) // include dependencies
   );
+
+  const numLocations = locations.length
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Project Home</Text>
       <Text style={styles.title}>
-        {project ? project.title : "Fetching Project Title..."}
+        {targetLocation ? targetLocation.location_name : project?.title || "Fetching Project Title..."}
       </Text>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Instructions</Text>
+        <Text style={styles.sectionTitle}>Instructions:</Text>
         <Text style={styles.sectionContent}>
           {project ? project.instructions : "Fetching Project Instructions..."}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Initial Clue</Text>
+        <Text style={styles.sectionTitle}>Clue:</Text>
         <Text style={styles.sectionContent}>
-          {project ? project.initial_clue : "Fetching Initial Clue..."}
+          {targetLocation ? targetLocation.clue : project?.initial_clue || "Fetching Initial Clue..."}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Total Score</Text>
+        <Text style={styles.sectionTitle}>Total Score:</Text>
         <Text style={styles.sectionContent}>
           {score}
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Locations Visited:</Text>
+        <Text style={styles.sectionContent}>
+          {`${visited.length}/${numLocations}`}
         </Text>
       </View>
 
