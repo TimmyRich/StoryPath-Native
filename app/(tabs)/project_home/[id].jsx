@@ -5,15 +5,16 @@ import { getProject, getTrackingData, getLocations, getLocation } from '../../..
 import { ProjectContext } from '../_layout';
 import { UserContext } from '../../_layout';
 import { useFocusEffect } from '@react-navigation/native';
+import WebView from 'react-native-webview';
 
 export default function ProjectHome() {
   const [score, setScore] = useState(0);
   const { project, setProject } = useContext(ProjectContext);
-  const [visited, setVisited] = useState([])
-  const [locations, setLocations] = useState([])
+  const [visited, setVisited] = useState([]);
+  const [locations, setLocations] = useState([]);
   const { username } = useContext(UserContext);
   const { id, location_id } = useLocalSearchParams();
-  const [targetLocation, setTargetLocation] = useState()
+  const [targetLocation, setTargetLocation] = useState();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -27,7 +28,7 @@ export default function ProjectHome() {
           console.error(error);
         }
       };
-  
+
       const fetchProject = async () => {
         try {
           const myProject = await getProject(id);
@@ -36,7 +37,7 @@ export default function ProjectHome() {
           console.error("Error Fetching Project...");
         }
       };
-  
+
       const fetchLocations = async () => {
         try {
           const locations = await getLocations(id);
@@ -46,7 +47,7 @@ export default function ProjectHome() {
           console.error(error);
         }
       };
-  
+
       const fetchTargetLocation = async () => {
         if (location_id) {
           try {
@@ -58,7 +59,7 @@ export default function ProjectHome() {
           }
         }
       };
-  
+
       fetchProject();
       fetchVisitedLocations();
       fetchLocations();
@@ -66,8 +67,8 @@ export default function ProjectHome() {
     }, [username, id, location_id]) // include dependencies
   );
 
-  const numLocations = locations.length
-  
+  const numLocations = locations.length;
+  console.log(targetLocation);
 
   return (
     <View style={styles.container}>
@@ -89,6 +90,17 @@ export default function ProjectHome() {
           {targetLocation ? targetLocation.clue : project?.initial_clue || "Fetching Initial Clue..."}
         </Text>
       </View>
+
+      {targetLocation && (
+        <View style={styles.webviewContainer}>
+          <Text style={styles.sectionTitle}>Location Content:</Text>
+          <WebView
+            originWhitelist={['*']}
+            source={{ html: targetLocation.location_content }}
+            style={styles.webview}
+          />
+        </View>
+      )}
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Total Score:</Text>
@@ -113,7 +125,6 @@ export default function ProjectHome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
     backgroundColor: '#f9f9f9',
   },
@@ -146,5 +157,12 @@ const styles = StyleSheet.create({
     color: '#888',
     textAlign: 'center',
     marginTop: 10,
+  },
+  webviewContainer: {
+    height: 200, // Set a fixed height for the WebView container
+    marginBottom: 15,
+  },
+  webview: {
+    flex: 1,
   },
 });

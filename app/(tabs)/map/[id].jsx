@@ -75,6 +75,7 @@ export default function Map() {
     };
     const [ mapState, setMapState ] = useState(initialMapState);
 
+    // Request Location Permission
     useEffect(() => {
         async function requestLocationPermission() {
             const { status } = await Location.requestForegroundPermissionsAsync();
@@ -153,7 +154,7 @@ export default function Map() {
                 showsUserLocation={mapState.locationPermission}
                 style={styles.container}
             >
-                {mapState.locations.map(location => (
+                {mapState.locations.map(location => ( // Each location within the map state gets a circle -> Update map state with visited locations only
                     <Circle
                         key={location.id}
                         center={location.coordinates}
